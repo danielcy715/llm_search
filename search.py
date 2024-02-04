@@ -40,7 +40,7 @@ SEARCHAPI_SEARCH_ENDPOINT = "https://www.searchapi.io/api/v1/search"
 
 # Specify the number of references from the search engine you want to use.
 # 8 is usually a good number.
-REFERENCE_COUNT = 8
+REFERENCE_COUNT = 20
 
 # Specify the default timeout for the search engine. If the search engine
 # does not respond within this time, we will return an error.
@@ -66,7 +66,8 @@ lepton_stop_words = [
 # is left to you, application creators, as an open problem.
 _rag_system_prompt = """You are a large language AI assistant. You are given a user question, and please write clean, concise and accurate answer to the question. You will be given a set of related contexts to the question, each starting with a reference number like [[citation:x]], where x is a number. Please use the context and cite the context at the end of each sentence if applicable.
 
-Your answer must be correct, accurate and written by an expert using an unbiased and professional tone. Please keep your answer within 1024 tokens. If the provided context does not offer enough information, please use your own knowledge to answer the user question.
+Your answer must be correct, accurate and written by an expert using an unbiased and professional tone. Please keep your answer within 3000 tokens. If the provided context does not offer enough information, please use your own knowledge to answer the user question.
+Use different paragraphs to separate different ideas or topics.
 
 Please cite the contexts with the reference numbers, in the format [citation:x]. If a sentence comes from multiple contexts, please list all applicable citations, like [citation:3][citation:5]. Other than code and specific names and citations, your answer must be written in the same language as the question.
 """
@@ -397,7 +398,7 @@ class RAG(Photon):
             # For all the search queries and results, we will use the Lepton KV to
             # store them so that we can retrieve them later. Specify the name of the
             # KV here.
-            "KV_NAME": "smart-search",
+            "KV_NAME": "search-with-lepton",
             # If set to true, will generate related questions. Otherwise, will not.
             "RELATED_QUESTIONS": "true",
             # if set to true, will rewrite user question. Otherwise, will not.
@@ -524,7 +525,7 @@ class RAG(Photon):
         self.related_history = []
         # A history of all the rewritten questions.
         self.question_history = []
-        self.token_upper_limit = MODEL_TOKEN_LIMIT.get(self.model, 4096)
+        self.token_upper_limit = MODEL_TOKEN_LIMIT.get(self.model, 8096)
         # whether we should rewrite user question
         self.should_do_rewrite_question = to_bool(os.environ["REWRITE_QUESTION"])
         # whether we should enable history
