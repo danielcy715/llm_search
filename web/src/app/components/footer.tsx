@@ -13,12 +13,9 @@ export const Footer: FC = () => {
         <a className="hover:text-zinc-950" href="https://www.zhugeliangai.com/">
           Home
         </a>
-        <a className="hover:text-zinc-950" href="https://search.zhugeliangai.com">
-          Playground
-        </a>
         <a
           className="hover:text-zinc-950"
-          href="https://github.com/danielcy715/llm_search"
+          href="https://github.com/danielcy715/llm_search/"
         >
           Github
         </a>
