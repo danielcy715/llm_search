@@ -51,10 +51,7 @@ jobs:
      source antenv/bin/activate
      pip install setuptools
      pip install -r requirements.txt
-  # Azure login
-  - uses: azure/login@v1
-    with:
-     creds: ${{ secrets.AZURE_CREDENTIALS_GITHUB_SECRET }}
+
   - uses: azure/appservice-settings@v1
     with:
      app-name: ${{ env.AZURE_WEBAPP_NAME }}
@@ -65,8 +62,6 @@ jobs:
     with:
      app-name: ${{ env.AZURE_WEBAPP_NAME }}
      package: ${{ env.WORKING_DIRECTORY }}
-     startup-command: lep login -c jmt4fk34:${{ secrets.LEPTON_WORKSPACE_TOKEN }};export SERPER_SEARCH_API_KEY=${{ secrets.SERPER_SEARCH_API_KEY }};export OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }};BACKEND=SERPER LLM_TYPE=OPENAI LLM_MODEL=gpt-3.5-turbo-0125 python3 search.py
-  # Azure logout
-  - name: logout
-    run: |
-     az logout
+     startup-command: export SERPER_SEARCH_API_KEY=${{ secrets.SERPER_SEARCH_API_KEY }};export OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }};BACKEND=SERPER LLM_TYPE=OPENAI LLM_MODEL=gpt-3.5-turbo-0125 python3 search.py
+     slot-name: 'Production'
+     publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_536B30A8566542CC8E718B34D44F5C3F }}
