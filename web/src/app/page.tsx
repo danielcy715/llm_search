@@ -13,7 +13,7 @@ export default function Home() {
         <Search></Search>
         <div className="flex gap-2 flex-wrap justify-center">
           <PresetQuery query="Who said live long and prosper?"></PresetQuery>
-          <PresetQuery query="天空为啥是蓝色？"></PresetQuery>
+          <PresetQuery query="The largest planet in solar system"></PresetQuery>
         </div>
         <Footer></Footer>
       </div>

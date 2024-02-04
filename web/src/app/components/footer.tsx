@@ -10,29 +10,17 @@ export const Footer: FC = () => {
       <div className="text-zinc-400"></div>
 
       <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-2 mt-2 text-zinc-400">
-        <a className="hover:text-zinc-950" href="https://www.mulanai.com/">
+        <a className="hover:text-zinc-950" href="https://www.zhugeliangai.com/">
           Home
         </a>
-        <a className="hover:text-zinc-950" href="https://search.mulanai.com">
+        <a className="hover:text-zinc-950" href="https://search.zhugeliangai.com">
           Playground
         </a>
         <a
           className="hover:text-zinc-950"
-          href="https://github.com/shibing624/SmartSearch"
+          href="https://github.com/danielcy715/llm_search"
         >
           Github
-        </a>
-        <a
-          className="hover:text-zinc-950"
-          href="https://twitter.com/OilandLuca"
-        >
-          Twitter
-        </a>
-        <a
-          className="hover:text-zinc-950"
-          href="https://blog.csdn.net/mingzai624"
-        >
-          Blog
         </a>
       </div>
     </div>
