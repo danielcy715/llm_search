@@ -1,25 +1,17 @@
 [**🇨🇳中文**](https://github.com/shibing624/SmartSearch/blob/main/README_zh.md) | [**🌐English**](https://github.com/shibing624/SmartSearch/blob/main/README.md) 
 
 <div align="center">
-    <a href="https://github.com/shibing624/SmartSearch">
-    <img src="https://github.com/shibing624/SmartSearch/blob/main/docs/icon.svg" height="50" alt="Logo">
-    </a>
     <br/>
-    <a href="https://search.mulanai.com/" target="_blank"> Online Demo </a>
+    <a href="https://jmt4fk34-search-with-lepton-modified2-1.tin.lepton.run?access_token=lep-webui-access-iPYheX9qUO3fyp5wLmUgfLdSwlxgDEc5" target="_blank"> Online Demo </a>
     <br/>
-    <img width="70%" src="https://github.com/shibing624/SmartSearch/blob/main/docs/screenshot.png">
+    <img width="70%" src="https://github.com/danielcy715/llm_search/blob/main/docs/demo.png">
 </div>
 
 -----------------
 
-# SmartSearch: Build your own conversational search engine with LLMs
-[![HF Models](https://img.shields.io/badge/Hugging%20Face-shibing624-green)](https://huggingface.co/shibing624)
-[![Github Stars](https://img.shields.io/github/stars/shibing624/SmartSearch?color=yellow)](https://star-history.com/#shibing624/SmartSearch&Timeline)
-[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
+# Intelligent Search: Build your own conversational search engine with LLMs
 [![License Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![python_version](https://img.shields.io/badge/Python-3.8%2B-green.svg)](requirements.txt)
-[![GitHub issues](https://img.shields.io/github/issues/shibing624/SmartSearch.svg)](https://github.com/shibing624/SmartSearch/issues)
-[![Wechat Group](https://img.shields.io/badge/wechat-group-green.svg?logo=wechat)](#Contact)
 
 
 ## Features
@@ -137,18 +129,6 @@ In addition, you will need to set the following secrets:
 * `OPENAI_API_KEY`: if you are using OpenAI, you need to specify the api key.
 
 
-## Todo
-
-1. Support multi-round retrieval, mainly displaying multi-round retrieval results on the page.
-2. Support third-party LLM's API, such as qwen, baichuan, etc.
-3. Mini program support, currently only supports web end.
-
-## Contact
-
-- Issue(suggestion): [![GitHub issues](https://img.shields.io/github/issues/shibing624/SmartSearch.svg)](https://github.com/shibing624/SmartSearch/issues)
-- Email: xuming: xuming624@qq.com
-- Wechat: Add my *Wechat ID: xuming624, note: name-company-NLP* to join the NLP discussion group.
-
 ## License
 
 The license agreement is [The Apache License 2.0](LICENSE), which can be used for commercial purposes for free. Please include SmartSearch's link and license agreement in the product description.
@@ -160,4 +140,5 @@ The project code is still rough, if everyone has improvements to the code, welco
 
 ## Reference
 - [leptonai/search_with_lepton](https://github.com/leptonai/search_with_lepton/tree/main)
+- [shibing624/SmartSearch](https://github.com/shibing624/SmartSearch)
 
