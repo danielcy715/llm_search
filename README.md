@@ -59,6 +59,10 @@ Output: The project root directory produces a `ui` folder, which contains static
 lep login
 python search.py
 ```
+ok, now your search app running on http://0.0.0.0:8081
+
+- Here is the demo for our online Colab execution service: [demo.ipynb](https://github.com/shibing624/SmartSearch/blob/main/demo.ipynb), it's Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shibing624/SmartSearch/blob/main/demo.ipynb)
+
 
 ## Using Search Engine API
 you can using Bing Search API or Google Search API.
@@ -94,7 +98,6 @@ export GOOGLE_SEARCH_CX=YOUR_GOOGLE_SEARCH_ENGINE_ID
 BACKEND=GOOGLE python search.py
 ```
 
-ok, now your search app running on http://0.0.0.0:8080
 
 ## Using OpenAI LLM
 
