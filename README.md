@@ -33,10 +33,7 @@ pip install -r requirements.txt
 
 ### 1. Build the front-end web
 
-There are two ways to build the front end:
-
-1. Download the pre-packaged front-end UI from https://github.com/shibing624/SmartSearch/releases/download/0.1.0/ui.zip and unzip it directly into the project root directory for use.
-2. Use npm to build the front end yourself (requires nodejs version 18 or above)
+Use npm to build the front end yourself (requires nodejs version 18 or above)
 ```shell
 cd web && npm install && npm run build
 ```
