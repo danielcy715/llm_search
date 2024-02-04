@@ -1,4 +1,3 @@
-[**🇨🇳中文**](https://github.com/shibing624/SmartSearch/blob/main/README_zh.md) | [**🌐English**](https://github.com/shibing624/SmartSearch/blob/main/README.md) 
 
 <div align="center">
     <br/>
