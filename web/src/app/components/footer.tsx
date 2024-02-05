@@ -10,12 +10,19 @@ export const Footer: FC = () => {
       <div className="text-zinc-400"></div>
 
       <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-2 mt-2 text-zinc-400">
-        <a className="hover:text-zinc-950" href="http://www.zhugeliangai.com/">
+        <a
+          className="hover:text-zinc-950"
+          href="https://www.zhugeliangai.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Home
         </a>
         <a
           className="hover:text-zinc-950"
           href="https://github.com/danielcy715/llm_search/"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Github
         </a>
