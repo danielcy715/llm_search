@@ -14,7 +14,14 @@ export const Title = ({ query }: { query: string }) => {
       >
         {query}
       </div>
-      <div className="flex-none">
+      <div className="flex gap-2">
+        <button
+          onClick={() => router.push("/index.html")}
+          type="button"
+          className="rounded flex items-center bg-transparent px-2 py-1 text-xs font-semibold text-blue-500 hover:bg-zinc-100 font-bold"
+        >
+          Home
+        </button>
         <button
           onClick={() => {
             router.push(
