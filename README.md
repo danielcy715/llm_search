@@ -1,7 +1,7 @@
 
 <div align="center">
     <br/>
-    <a href="https://jmt4fk34-search-with-lepton-modified2-1.tin.lepton.run?access_token=lep-webui-access-iPYheX9qUO3fyp5wLmUgfLdSwlxgDEc5" target="_blank"> Online Demo </a>
+    <a href="http://search.zhugeliangai.com" target="_blank"> Online Demo </a>
     <br/>
     <img width="70%" src="https://github.com/danielcy715/llm_search/blob/main/docs/demo.png">
 </div>
