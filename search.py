@@ -7,7 +7,7 @@ import os
 import re
 import threading
 import traceback
-from typing import List, Generator, Optional
+from typing import List, Generator, Optional, Union
 
 import httpx
 import leptonai
@@ -21,6 +21,8 @@ from leptonai.photon import Photon, StaticFiles
 from leptonai.photon.types import to_bool
 from leptonai.util import tool
 from loguru import logger
+from openai import OpenAI
+import redis
 
 try:
     from typing import Annotated
@@ -41,7 +43,7 @@ SEARCHAPI_SEARCH_ENDPOINT = "https://www.searchapi.io/api/v1/search"
 
 # Specify the number of references from the search engine you want to use.
 # 8 is usually a good number.
-REFERENCE_COUNT = 20
+REFERENCE_COUNT = 15
 
 # Specify the default timeout for the search engine. If the search engine
 # does not respond within this time, we will return an error.
@@ -149,6 +151,11 @@ MODEL_TOKEN_LIMIT = {
     "gpt-4-vision-preview": 128000,
 }
 
+# max key and value lengths: 256 bytes for key, and 256KB for value.
+_max_key_length_ = 256
+_max_value_length_ = 256 * 1024
+_cache_ttl_ = 86400  # 1 day
+
 
 def is_chinese(uchar):
     """Check if the character is Chinese."""
@@ -239,6 +246,7 @@ def search_with_serper(query: str, subscription_key: str):
         logger.error(f"{response.status_code} {response.text}")
         raise HTTPException(response.status_code, "Search engine error.")
     json_content = response.json()
+    logger.info(f"serper search response: {json_content}")
     try:
         # convert to the same format as bing/google
         contexts = []
@@ -435,12 +443,13 @@ class RAG(Photon):
     # concurrent.
     handler_max_concurrency = 16
 
+    @property
     def local_client(self):
         """
         Gets a thread-local client, so in case openai clients are not thread safe,
         each thread will have its own client.
         """
-        import openai
+
 
         thread_local = threading.local()
         try:
@@ -453,7 +462,7 @@ class RAG(Photon):
             else:
                 base_url = os.environ.get("OPENAI_BASE_URL")
                 api_key = os.environ.get("OPENAI_API_KEY")
-            thread_local.client = openai.OpenAI(
+            thread_local.client = OpenAI(
                 base_url=base_url,
                 api_key=api_key,
                 # We will set the connect timeout to be 10 seconds, and read/write
@@ -517,6 +526,8 @@ class RAG(Photon):
         # Create the KV to store the search results.
         logger.info("Creating KV. May take a while for the first time.")
         self.kv = KV(os.environ["KV_NAME"], create_if_not_exists=True, error_if_exists=False)
+        # create a redis client
+        self.redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
         # whether we should generate related questions.
         self.should_do_related_questions = to_bool(os.environ["RELATED_QUESTIONS"])
         # A history of all the queries and responses.
@@ -558,7 +569,7 @@ class RAG(Photon):
             )
             user_prompt = f"{qa_prompt}\n\n{query}"
             logger.debug(f"related prompt: {user_prompt}")
-            response = self.local_client().chat.completions.create(
+            response = self.local_client.chat.completions.create(
                 model=self.model,
                 messages=self.related_history + [{"role": "user", "content": user_prompt}],
                 tools=[{
@@ -593,7 +604,7 @@ class RAG(Photon):
             prompt = _rewrite_question_qa_prompt_zh if contains_chinese(query) else _rewrite_question_qa_prompt
             user_prompt = f"{prompt}\n\n{query}"
             logger.debug(f"rewrite_question prompt: {user_prompt}")
-            response = self.local_client().chat.completions.create(
+            response = self.local_client.chat.completions.create(
                 model=self.model,
                 messages=self.question_history + [{"role": "user", "content": user_prompt}],
                 max_tokens=512,
@@ -687,8 +698,29 @@ class RAG(Photon):
             yield result
         # Second, upload to KV. Note that if uploading to KV fails, we will silently
         # ignore it, because we don't want to affect the user experience.
-        _ = self.executor.submit(self.kv.put, search_uuid, "".join(all_yielded_results))
+        _ = self.executor.submit(self.write_to_cache, search_uuid, "".join(all_yielded_results))
 
+    def write_to_cache(self, key: str, value: Union[str, bytes]) -> None:
+        """
+        Put a key-value pair in the KV.
+        """
+        if len(key) > _max_key_length_:
+            raise ValueError(
+                f"Key length {len(key)} exceeds the maximum allowed length"
+                f" {_max_key_length_}."
+            )
+        if len(value) > _max_value_length_:
+            raise ValueError(
+                f"Value length {len(value)} exceeds the maximum allowed length"
+                f" {_max_value_length_}."
+            )
+        ok = self.redis_client.set(key, value, ex=_cache_ttl_)
+
+        if not ok:
+            logger.trace(f"key put error: {key}")
+            raise RuntimeError(
+                f"Failed to put key {key} in redis cache"
+            )
     @Photon.handler(method="POST", path="/query")
     def query_function(
             self,
@@ -725,12 +757,16 @@ class RAG(Photon):
                         str(self.should_do_rewrite_question),
                         str(self.enable_history)
                     ])
-                result = self.kv.get(search_uuid)
 
-                def str_to_generator(result: str) -> Generator[str, None, None]:
-                    yield result
+                key_exists = self.redis_client.exists(search_uuid)
 
-                return StreamingResponse(str_to_generator(result))
+                if key_exists:
+                    # Since the key exists, retrieve its value
+                    result = self.redis_client.get(search_uuid)
+                    def str_to_generator(result: str) -> Generator[str, None, None]:
+                         yield result
+
+                    return StreamingResponse(str_to_generator(result))
             except KeyError:
                 logger.debug(f"Search api key {search_uuid} not found, add to KV.")
             except Exception as e:
@@ -759,7 +795,7 @@ class RAG(Photon):
             self.question_history = []
 
         try:
-            client = self.local_client()
+            client = self.local_client
             # Rewrite query if needed, seed new query to search engine.
             if self.should_do_rewrite_question:
                 if not self.question_history:
